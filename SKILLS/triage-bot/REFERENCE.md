@@ -8,7 +8,7 @@ Always invoke the `message.py` tool with the root of the repository as the worki
 
 `uv run message.py incoming` reads messages from the message queue.
 
-It produces output following:
+If any messages are pending, it produces output following:
 
 ```yaml
 id: <conversation id>
@@ -16,6 +16,8 @@ history:
   - $$BOT$$ <message>
   - $$HUMAN$$ <message>
 ```
+
+Otherwise it produces `# NO MESSAGES`
 
 Messages are emitted in chronological order ending with latest. Messages are tagged by whether a `$$HUMAN$$` or a `$$BOT$$` has produced them (AI or otherwise).
 

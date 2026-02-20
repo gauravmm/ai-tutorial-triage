@@ -26,6 +26,7 @@ Additionally, you have access to the following tools:
 
 - `reset`: reset all simulations with some initial test data.
 - `report` : print the current state of every conversation.
+- `message`: simulate a conversation in the shell.
 - `telegram` : start a telegram bot. Keep this running in the background to automatically send/receive messages.
 
 Additionally, you can read the current log of every conversation in the folder `conversations/`
