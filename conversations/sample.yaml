@@ -1,0 +1,10 @@
+# This is a sample conversation. This file would be named with the conversation ID.
+id: sample # Same as the filename
+history: # In chronological order
+  - $$HUMAN$$ The human turn of the conversation.
+  - $$BOT$$ The robot turn of the conversation.
+scheduled: # Optional, only present if something is scheduled.
+  date:
+  time: am | pm
+
+escalated: # Optional, only present if conversation is escalated.

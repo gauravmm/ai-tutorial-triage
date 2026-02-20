@@ -29,14 +29,3 @@ Additionally, you have access to the following tools:
 - `telegram` : start a telegram bot. Keep this running in the background to automatically send/receive messages.
 
 Additionally, you can read the current log of every conversation in the folder `conversations/`
-
-```sh
-tools/schedule "<YYYY-mm-dd>" "<am|pm>" "<patient_id>" : produces JSON
-tools/incoming : produces JSON
-tools/outgoing "<message JSON>"
-tools/refer "<patient_id>" : 
-```
-
-```sh
-tools/intake accepts JSON, writes a file
-```

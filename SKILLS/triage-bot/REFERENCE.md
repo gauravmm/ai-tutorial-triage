@@ -2,6 +2,8 @@
 
 These tools are only for use by the `triage-bot` skill. The skills are relevant to interacting with a simulated message channel.
 
+Always invoke the `message.py` tool with the root of the repository as the working directory.
+
 ## Incoming and Outgoing
 
 `uv run message.py incoming` reads messages from the message queue.
