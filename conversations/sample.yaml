@@ -3,8 +3,7 @@ id: sample # Same as the filename
 history: # In chronological order
   - $$HUMAN$$ The human turn of the conversation.
   - $$BOT$$ The robot turn of the conversation.
-scheduled: # Optional, only present if something is scheduled.
-  date:
-  time: am | pm
-
-escalated: # Optional, only present if conversation is escalated.
+scheduled: # Optional, only present if appointment something is scheduled.
+  date: 2026-02-28 # Date in YYYY-mm-dd
+  time: am # Time in am | pm
+escalated: True # Optional, only present (and True) if conversation is escalated.
