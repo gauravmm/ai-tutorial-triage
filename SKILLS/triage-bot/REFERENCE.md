@@ -42,3 +42,13 @@ To escalate to the emergency department, you can call this tool:
 ```sh
 uv run message.py escalate "<conversation id>"
 ```
+
+## Fatal errors
+
+If the tool prints the following message to stderr and exits, it must not be retried and the session should be aborted:
+
+```
+Fatal error: file locking (fcntl) is not supported on this platform
+```
+
+This means the simulator is running on an unsupported operating system.

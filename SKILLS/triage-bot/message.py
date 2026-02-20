@@ -12,24 +12,38 @@ from typing import Generator
 import yaml
 from pathlib import Path
 
+try:
+    import fcntl
+except ImportError:
+    fcntl = None  # type: ignore[assignment]
+
 CONVERSATIONS_DIR = Path("conversations")
 
 
 @contextmanager
 def conversation(conv_id: str) -> Generator[dict, None, None]:
     """Load a conversation, and on exit set last=BOT and write it back."""
+    if fcntl is None:
+        print(
+            "Fatal error: file locking (fcntl) is not supported on this platform",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     path = CONVERSATIONS_DIR / f"{conv_id}.yaml"
     if not path.exists():
         print(f"Error: conversation '{conv_id}' not found", file=sys.stderr)
         sys.exit(1)
-    with open(path) as f:
+    with open(path, "r+") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
         data = yaml.safe_load(f)
-    yield data
-    data["last"] = "BOT"
-    with open(path, "w") as f:
+        yield data
+        data["last"] = "BOT"
+        f.seek(0)
+        f.truncate()
         yaml.dump(
             data, f, default_flow_style=False, allow_unicode=True, sort_keys=False
         )
+    # lock released on file close
 
 
 def cmd_incoming(_: argparse.Namespace) -> None:
