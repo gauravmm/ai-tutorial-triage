@@ -10,7 +10,7 @@ You need to prepare a `triage-bot` which interacts with patients:
         b. Moderate (fever, long coughing, etc.): schedule them for an appointment
         c. Severe (bleeding, etc.): tell them to go to the emergency room.
 
-You also need to prepare a `intake-bot` that:
+You also need to prepare a `reporter-bot` that:
 
     1. Reads a conversation log between a human and the intake bot
     2. Extracts and reports relevant details:
@@ -18,9 +18,9 @@ You also need to prepare a `intake-bot` that:
         b. `sex`
         c. `age`
         d. `symptoms`
-        e. `triage`, which is one of Minor, Moderate, Severe
+        e. `triage`, which is one of `Minor`, `Moderate`, `Severe`
 
-Each agent has access to its own specific prompt and tools in the `.agents/` folder. These are implemented as skills here, but in reality would be separate bots running on the cloud.
+Each agent has access to its own specific prompt and tools in the `.agents/skills/` folder. These are implemented as skills here, but in reality would be separate bots running on the cloud.
 
 Additionally, you have access to the following tools:
 
@@ -29,4 +29,4 @@ Additionally, you have access to the following tools:
 - `message`: simulate a conversation in the shell.
 - `telegram` : start a telegram bot. Keep this running in the background to automatically send/receive messages.
 
-You can read the current log of every conversation in the folder `conversations/`
+You can run these using Run and Debug (Ctrl + Shift + D) and selecting them in the menu on the right. You can read the current log of every conversation in the folder `conversations/`, seen in Explorer (Ctrl + Shift + E).
