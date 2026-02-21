@@ -184,7 +184,7 @@ SEED: list[dict] = [
         "id": "sam",
         "history": [
             "$$HUMAN$$ Hi, I was wondering if you could tell me your opening hours?",
-            "$$BOT$$ We're open Monday to Friday, 8am–6pm. Is there anything medical I can help with?",
+            "$$BOT$$ We're open Monday to Friday, 8am-6pm. Is there anything medical I can help with?",
             "$$HUMAN$$ No, that's all I needed. Thanks!",
             "$$BOT$$ Happy to help. Take care!",
         ],
@@ -212,6 +212,8 @@ CONVERSATIONS_DIR.mkdir(exist_ok=True)
 for conv in SEED:
     path = CONVERSATIONS_DIR / f"{conv['id']}.yaml"
     with open(path, "w") as f:
-        yaml.dump(conv, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
+        yaml.dump(
+            conv, f, default_flow_style=False, allow_unicode=True, sort_keys=False
+        )
 
 print(f"Created {len(SEED)} seed conversation(s).")

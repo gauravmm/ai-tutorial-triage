@@ -58,14 +58,15 @@ def human_conversation(
 
 def format_status(data: dict) -> str:
     if data.get("escalated"):
-        return f"{RED}escalated{RESET}"
+        return f"{RED}🚨 escalated{RESET}"
     if data.get("no_further_action"):
-        return f"{DIM}no further action{RESET}"
+        return f"{DIM}✅ no further action{RESET}"
     if s := data.get("scheduled"):
-        return f"{GREEN}scheduled {s['date']} {s['time']}{RESET}"
+        return f"{GREEN}📅 scheduled {s['date']} {s['time']}{RESET}"
     last = data.get("last", "?")
     color = CYAN if last == "HUMAN" else YELLOW
-    return f"active ({color}{last}{RESET} spoke last)"
+    icon = "💬" if last == "HUMAN" else "🤖"
+    return f"{icon} {color}{last}{RESET} spoke last"
 
 
 def print_history(data: dict) -> None:

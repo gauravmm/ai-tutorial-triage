@@ -116,6 +116,7 @@ def enter_conversation(conv_id: str, create: bool = False) -> None:
     observer.schedule(watcher, str(CONVERSATIONS_DIR), recursive=False)
     observer.start()
 
+    text = ""
     print(
         f"{DIM}Type a message, /new for a new conversation, or Ctrl+D to quit.{RESET}"
     )
