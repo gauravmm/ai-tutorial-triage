@@ -29,7 +29,7 @@ uv run message.py outgoing "<conversation id>" "<message string>"
 
 ## Terminating conversations
 
-Once the conversation is complete, you can end it by either scheduling an appointment or escalating to the emergency department.
+Once the conversation is complete, you can end it by either scheduling an appointment, escalating to the emergency department, or marking the call as no further action.
 
 To schedule an appointment, call this tool with a specific date and with either `am` or `pm`:
 
@@ -41,6 +41,12 @@ To escalate to the emergency department, you can call this tool:
 
 ```sh
 uv run message.py escalate "<conversation id>"
+```
+
+To mark as no-further-action, you can call this tool:
+
+```sh
+uv run message.py no-further-action "<conversation id>"
 ```
 
 ## Fatal errors

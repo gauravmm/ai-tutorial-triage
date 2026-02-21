@@ -20,7 +20,7 @@ You also need to prepare a `intake-bot` that:
         d. Symptoms
     3. Includes in the report the likely triage classification (Minor/Moderate/Severe)
 
-These are implemented as skills here, but in reality would be separate bots running on the cloud. Each agent has access to its own specific prompt and tools in the `SKILLS/` folder.
+Each agent has access to its own specific prompt and tools in the `SKILLS/` folder. These are implemented as skills here, but in reality would be separate bots running on the cloud.
 
 Additionally, you have access to the following tools:
 
