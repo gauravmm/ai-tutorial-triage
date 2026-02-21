@@ -45,7 +45,7 @@ class ConversationWatcher(FileSystemEventHandler):
     def on_modified(self, event: FileModifiedEvent | DirModifiedEvent) -> None:
         if event.is_directory or isinstance(event, DirModifiedEvent):
             return
-        path = Path(event.src_path)
+        path = Path(str(event.src_path))
         if path.name != f"{self.conv_id}.yaml":
             return
         try:

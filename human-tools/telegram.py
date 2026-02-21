@@ -4,13 +4,18 @@ Each Telegram chat gets conversations named {chat_id}_{nonce}.yaml.
 Send /new in Telegram to start a fresh conversation (increments the nonce).
 """
 
-import asyncio
 import logging
 import sys
 from pathlib import Path
 
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
+from telegram.ext import (
+    Application,
+    CommandHandler,
+    ContextTypes,
+    MessageHandler,
+    filters,
+)
 
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import CONVERSATIONS_DIR, human_conversation
@@ -25,13 +30,14 @@ TOKEN_FILE = Path("telegram.key")
 # Nonce helpers
 # ---------------------------------------------------------------------------
 
+
 def _current_nonce(chat_id: int) -> int:
     """Return the highest existing nonce for this chat_id (0 if none)."""
     prefix = f"{chat_id}_"
     nonces = [
-        int(p.stem[len(prefix):])
+        int(p.stem[len(prefix) :])
         for p in CONVERSATIONS_DIR.glob(f"{chat_id}_*.yaml")
-        if p.stem[len(prefix):].isdigit()
+        if p.stem[len(prefix) :].isdigit()
     ]
     return max(nonces, default=0)
 
@@ -52,21 +58,26 @@ def next_conv_id(chat_id: int) -> str:
 # Handlers
 # ---------------------------------------------------------------------------
 
+
 async def handle_new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.effective_chat or not update.message:
+        return
+
     chat_id = update.effective_chat.id
     conv_id = next_conv_id(chat_id)
     # Touch the file so the nonce is committed even before a message arrives
-    path = CONVERSATIONS_DIR / f"{conv_id}.yaml"
     with human_conversation(conv_id, create=True):
         pass  # creates file, sets last=HUMAN (no history yet)
-    path_prev = CONVERSATIONS_DIR / f"{chat_id}_{_current_nonce(chat_id) - 1}.yaml"
-    log.info("New conversation started: %s", conv_id)
+    log.info(f"New conversation started: {conv_id}")
     await update.message.reply_text(
         f"New conversation started (ID: {conv_id}). Previous conversation is closed."
     )
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not update.effective_chat or not update.message:
+        return
+
     chat_id = update.effective_chat.id
     text = update.message.text or ""
     conv_id = get_conv_id(chat_id)
@@ -82,10 +93,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 # Entry point
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     if not TOKEN_FILE.exists():
-        print(f"Error: {TOKEN_FILE} not found. Copy telegram.key.EXAMPLE and add your token.")
-        sys.exit(1)
+        print(
+            f"Error: {TOKEN_FILE} not found. Copy telegram.key.EXAMPLE and add your token."
+        )
+        return
 
     token = TOKEN_FILE.read_text().strip()
     CONVERSATIONS_DIR.mkdir(exist_ok=True)
