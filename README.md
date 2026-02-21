@@ -14,13 +14,13 @@ You also need to prepare a `intake-bot` that:
 
     1. Reads a conversation log between a human and the intake bot
     2. Extracts and reports relevant details:
-        a. Name
-        b. Sex
-        c. Age
-        d. Symptoms
-    3. Includes in the report the likely triage classification (Minor/Moderate/Severe)
+        a. `name`
+        b. `sex`
+        c. `age`
+        d. `symptoms`
+        e. `triage`, which is one of Minor, Moderate, Severe
 
-Each agent has access to its own specific prompt and tools in the `SKILLS/` folder. These are implemented as skills here, but in reality would be separate bots running on the cloud.
+Each agent has access to its own specific prompt and tools in the `.agents/` folder. These are implemented as skills here, but in reality would be separate bots running on the cloud.
 
 Additionally, you have access to the following tools:
 
@@ -29,4 +29,4 @@ Additionally, you have access to the following tools:
 - `message`: simulate a conversation in the shell.
 - `telegram` : start a telegram bot. Keep this running in the background to automatically send/receive messages.
 
-Additionally, you can read the current log of every conversation in the folder `conversations/`
+You can read the current log of every conversation in the folder `conversations/`

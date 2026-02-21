@@ -29,11 +29,15 @@ print(f"Deleted {len(deleted_reports)} existing report(s).")
 # ---------------------------------------------------------------------------
 
 SEED: list[dict] = [
-    # --- Active: last=HUMAN (6) — awaiting bot reply ---
+    # --- Active: last=HUMAN (8) — awaiting bot reply ---
     {
         "id": "alice",
         "history": [
             "$$HUMAN$$ Hi, I'm Alice Marsh, I'm 35 years old. I've had a splitting headache for the past two days.",
+            "$$BOT$$ I'm sorry to hear that. How severe is the pain on a scale of 1–10, and have you had headaches like this before?",
+            "$$HUMAN$$ I'd say around a 7. I do get migraines sometimes, but this feels different — more pressure, and it hasn't let up at all.",
+            "$$BOT$$ Are you experiencing any sensitivity to light, neck stiffness, or changes in vision?",
+            "$$HUMAN$$ Yes, the light is really bothering me. No neck stiffness though.",
         ],
         "last": "HUMAN",
     },
@@ -50,6 +54,8 @@ SEED: list[dict] = [
         "id": "carol",
         "history": [
             "$$HUMAN$$ Hi, I'm Carol Fenn, I'm 33. My kid has had a runny nose and mild cough since Monday.",
+            "$$BOT$$ How old is your child, and have they had a fever or any difficulty breathing?",
+            "$$HUMAN$$ She's 5. Her temperature was 37.5°C this morning — nothing too high. No breathing trouble.",
         ],
         "last": "HUMAN",
     },
@@ -75,25 +81,33 @@ SEED: list[dict] = [
         "id": "frank",
         "history": [
             "$$HUMAN$$ Hi, I'm Frank Dolan, I'm 45. My lower back has been aching for a week. I work at a desk all day.",
+            "$$BOT$$ Has the pain come on gradually or was there a specific moment it started? Does it radiate down your legs at all?",
+            "$$HUMAN$$ Gradually, over the past week. No leg pain — just a constant dull ache in my lower back, maybe a 4 out of 10.",
         ],
         "last": "HUMAN",
     },
-    # --- Active: last=BOT (4) — awaiting human reply; registration incomplete ---
+    # --- Active: last=BOT (2) — awaiting human reply; registration incomplete ---
     {
         "id": "grace",
         "history": [
             "$$HUMAN$$ I hurt my knee at the gym yesterday.",
             "$$BOT$$ I'm sorry to hear that. Can you describe the pain — is it sharp, dull, or aching? Does it hurt to bend the knee?",
+            "$$HUMAN$$ It's a dull ache. I can bend it a little but it's quite painful and there's some swelling.",
+            "$$BOT$$ Did you hear a pop when it happened? Any feeling of instability when you stand? Could I also get your name and age?",
+            "$$HUMAN$$ No pop. It does feel a bit unstable. I'm Grace Tanner, I'm 30.",
         ],
-        "last": "BOT",
+        "last": "HUMAN",
     },
     {
         "id": "henry",
         "history": [
             "$$HUMAN$$ I've been coughing for three weeks.",
             "$$BOT$$ That's quite a while. Is the cough dry or productive? Any blood or discoloured mucus?",
+            "$$HUMAN$$ It's productive — yellowish mucus. No blood.",
+            "$$BOT$$ Have you had a fever or shortness of breath? And could I get your name and age?",
+            "$$HUMAN$$ I'm Henry Walsh, I'm 52. No fever, but I do get a bit breathless when it's bad.",
         ],
-        "last": "BOT",
+        "last": "HUMAN",
     },
     {
         "id": "iris",
