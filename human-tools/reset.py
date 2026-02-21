@@ -181,7 +181,7 @@ SEED: list[dict] = [
     },
     # --- No further action (2) ---
     {
-        "id": "sam",
+        "id": "samantha",
         "history": [
             "$$HUMAN$$ Hi, I was wondering if you could tell me your opening hours?",
             "$$BOT$$ We're open Monday to Friday, 8am-6pm. Is there anything medical I can help with?",
