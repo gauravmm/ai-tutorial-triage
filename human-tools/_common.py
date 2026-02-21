@@ -62,7 +62,7 @@ def format_status(data: dict) -> str:
     if data.get("no_further_action"):
         return f"{DIM}✅ no further action{RESET}"
     if s := data.get("scheduled"):
-        return f"{GREEN}📅 scheduled {s['date']} {s['time']}{RESET}"
+        return f"{GREEN}📅 {s['date']} {s['time']}{RESET}"
     last = data.get("last", "?")
     color = CYAN if last == "HUMAN" else YELLOW
     icon = "💬" if last == "HUMAN" else "🤖"
