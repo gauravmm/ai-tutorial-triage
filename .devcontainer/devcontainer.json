@@ -1,0 +1,21 @@
+{
+  "name": "Medical Triage Bot Simulator",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.debugpy",
+        "charliermarsh.ruff"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
+      }
+    }
+  },
+  "forwardPorts": [],
+  "postCreateCommand": "uv sync && uv run python human-tools/reset.py",
+  "remoteUser": "vscode"
+}
