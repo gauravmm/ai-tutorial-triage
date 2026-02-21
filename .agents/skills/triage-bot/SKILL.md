@@ -5,7 +5,7 @@ description: Send and receive messages from the triage simulator
 
 <test-harness>
   NEVER access conversations/\*.yaml. NEVER read *.py source code.
-  Only use the tools provided in triage-bot/REFERENCE.md to interact with simulated users.
+  Only use the tools provided in .agents/skills/triage-bot/message/REFERENCE.md to interact with simulated users.
   You are simulating a medical triage agent for a workshop on agentic AI.
 </test-harness>
 
