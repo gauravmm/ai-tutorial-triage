@@ -1,0 +1,8 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "/^uv run message\\.py incoming$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
+}
