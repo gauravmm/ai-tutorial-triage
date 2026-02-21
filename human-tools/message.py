@@ -12,6 +12,7 @@ from watchdog.observers import Observer
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import (
     BOLD,
+    CYAN,
     DIM,
     GREEN,
     RED,
@@ -21,8 +22,15 @@ from _common import (
     format_status,
     human_conversation,
     load_all,
-    print_history,
 )
+
+
+def _fmt_line(line: str) -> str:
+    if line.startswith("$$HUMAN$$ "):
+        return CYAN + line.replace("$$HUMAN$$ ", "💬 ", 1) + RESET
+    if line.startswith("$$BOT$$ "):
+        return YELLOW + line.replace("$$BOT$$ ", "🤖 ", 1) + RESET
+    return line
 
 
 # ---------------------------------------------------------------------------
@@ -60,9 +68,8 @@ class ConversationWatcher(FileSystemEventHandler):
             new_lines = history[self._last_len :]
             self._last_len = len(history)
         for line in new_lines:
-            if line.startswith("$$BOT$$"):
-                print(f"\r  {YELLOW}{line}{RESET}")
-                print(f"[{self.conv_id}] > ", end="", flush=True)
+            print("\r  " + _fmt_line(line))
+        print(f"[{self.conv_id}] > ", end="", flush=True)
 
 
 # ---------------------------------------------------------------------------
@@ -106,7 +113,9 @@ def enter_conversation(conv_id: str, create: bool = False) -> None:
         with open(path) as f:
             data = yaml.safe_load(f)
         if data:
-            print_history(data)
+            for line in data.get("history", []):
+                print(_fmt_line(line))
+
     else:
         print(f"{DIM}(new conversation){RESET}")
 

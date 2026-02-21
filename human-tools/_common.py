@@ -67,13 +67,3 @@ def format_status(data: dict) -> str:
     color = CYAN if last == "HUMAN" else YELLOW
     icon = "💬" if last == "HUMAN" else "🤖"
     return f"{icon} {color}{last}{RESET} spoke last"
-
-
-def print_history(data: dict) -> None:
-    for line in data.get("history", []):
-        if line.startswith("$$HUMAN$$"):
-            print(f"  {CYAN}{line}{RESET}")
-        elif line.startswith("$$BOT$$"):
-            print(f"  {YELLOW}{line}{RESET}")
-        else:
-            print(f"  {line}")

@@ -1,8 +1,7 @@
 {
   "chat.tools.terminal.autoApprove": {
-    "/^uv run message\\.py incoming$/": {
-      "approve": true,
-      "matchCommandLine": true
+    "/^uv run triage-bot/message\\.py/": {
+      "approve": true
     }
   }
 }
