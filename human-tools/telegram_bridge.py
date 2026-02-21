@@ -1,14 +1,17 @@
-"""Telegram bot: routes incoming messages into conversation YAML files.
+"""Telegram bot: routes incoming messages into conversation YAML files
+and delivers bot replies back to Telegram users via watchdog.
 
 Each Telegram chat gets conversations named {chat_id}_{nonce}.yaml.
 Send /new in Telegram to start a fresh conversation (increments the nonce).
 """
 
+import asyncio
 import logging
 import sys
 from pathlib import Path
 
-from telegram import Update
+import yaml
+from telegram import Bot, Update
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -16,6 +19,8 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from watchdog.events import DirModifiedEvent, FileModifiedEvent, FileSystemEventHandler
+from watchdog.observers import Observer
 
 sys.path.insert(0, str(Path(__file__).parent))
 from _common import CONVERSATIONS_DIR, human_conversation
@@ -69,6 +74,68 @@ def next_conv_id(chat_id: int) -> str:
     return f"{chat_id}_{nonce}"
 
 
+def _parse_chat_id(stem: str) -> int | None:
+    """Extract chat_id from '{chat_id}_{nonce}', or None if not that format."""
+    parts = stem.rsplit("_", 1)
+    if len(parts) == 2 and parts[1].isdigit() and parts[0].lstrip("-").isdigit():
+        return int(parts[0])
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Watchdog: watch for bot replies and forward to Telegram
+# ---------------------------------------------------------------------------
+
+
+class BotReplyWatcher(FileSystemEventHandler):
+    def __init__(self, bot: Bot, loop: asyncio.AbstractEventLoop) -> None:
+        self.bot = bot
+        self.loop = loop
+        # Pre-seed sent counts from existing files to avoid re-sending on restart
+        self._sent: dict[str, int] = {}
+        for path in CONVERSATIONS_DIR.glob("*.yaml"):
+            if _parse_chat_id(path.stem) is None:
+                continue
+            try:
+                with open(path) as f:
+                    data = yaml.safe_load(f)
+                self._sent[path.stem] = len(data.get("history", [])) if data else 0
+            except Exception:
+                pass
+
+    def on_modified(self, event: FileModifiedEvent | DirModifiedEvent) -> None:
+        if event.is_directory or isinstance(event, DirModifiedEvent):
+            return
+        path = Path(str(event.src_path))
+        if path.suffix != ".yaml":
+            return
+        chat_id = _parse_chat_id(path.stem)
+        if chat_id is None:
+            return
+        try:
+            with open(path) as f:
+                data = yaml.safe_load(f)
+        except Exception:
+            return
+        if not data:
+            return
+
+        history = data.get("history", [])
+        conv_id = path.stem
+        sent = self._sent.get(conv_id, 0)
+        new_lines = history[sent:]
+        self._sent[conv_id] = len(history)
+
+        for line in new_lines:
+            if line.startswith("$$BOT$$ "):
+                text = line[len("$$BOT$$ ") :]
+                asyncio.run_coroutine_threadsafe(
+                    self.bot.send_message(chat_id=chat_id, text=text),
+                    self.loop,
+                )
+                log.info("[%s] → Telegram %d: %s", conv_id, chat_id, text)
+
+
 # ---------------------------------------------------------------------------
 # Handlers
 # ---------------------------------------------------------------------------
@@ -85,7 +152,6 @@ async def handle_new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
 
     chat_id = update.effective_chat.id
     conv_id = next_conv_id(chat_id)
-    # Touch the file so the nonce is committed even before a message arrives
     with human_conversation(conv_id, create=True):
         pass  # creates file, sets last=HUMAN (no history yet)
     log.info("New conversation started: %s", conv_id)
@@ -112,6 +178,29 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 
 # ---------------------------------------------------------------------------
+# Lifecycle: start/stop watchdog alongside the app
+# ---------------------------------------------------------------------------
+
+
+async def post_init(app: Application) -> None:
+    loop = asyncio.get_event_loop()
+    watcher = BotReplyWatcher(app.bot, loop)
+    observer = Observer()
+    observer.schedule(watcher, str(CONVERSATIONS_DIR), recursive=False)
+    observer.start()
+    app.bot_data["observer"] = observer
+    log.info("Watchdog started on %s/", CONVERSATIONS_DIR)
+
+
+async def post_shutdown(app: Application) -> None:
+    observer = app.bot_data.get("observer")
+    if observer:
+        observer.stop()
+        observer.join()
+    log.info("Watchdog stopped")
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -126,7 +215,13 @@ def main() -> None:
     token = TOKEN_FILE.read_text().strip()
     CONVERSATIONS_DIR.mkdir(exist_ok=True)
 
-    app = Application.builder().token(token).build()
+    app = (
+        Application.builder()
+        .token(token)
+        .post_init(post_init)
+        .post_shutdown(post_shutdown)
+        .build()
+    )
     app.add_handler(CommandHandler("help", handle_help))
     app.add_handler(CommandHandler("new", handle_new))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
