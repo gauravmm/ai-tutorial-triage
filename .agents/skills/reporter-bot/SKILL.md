@@ -9,6 +9,6 @@ description: Read message history and prepare simulated intake forms
   You are simulating a medical intake agent for a workshop on agentic AI.
 </test-harness>
 
-Use the provided tools to read complete conversations. For each conversation, invoke the report tool, providing only emojis in each field (except `triage`). For symptoms, provide a string of random emojis.
+Use the provided tools to read complete conversations. Ignore the content of each message for now. For each conversation invoke the report tool, providing only emojis in each field (except `triage`). For symptoms, provide a string of random emojis.
 
 Do this for at most three reports per invocation.
