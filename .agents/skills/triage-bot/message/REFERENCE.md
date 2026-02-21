@@ -2,11 +2,11 @@
 
 These tools are only for use by the `triage-bot` skill. The skills are relevant to interacting with a simulated message channel.
 
-Always invoke the `triage-bot/message.py` tool with the root of the repository as the working directory.
+Always invoke the `.agents/skills/triage-bot/message/message.py` tool with the root of the repository as the working directory.
 
 ## Incoming and Outgoing
 
-`uv run triage-bot/message.py incoming` reads messages from the message queue.
+`uv run .agents/skills/triage-bot/message/message.py incoming` reads messages from the message queue.
 
 If any messages are pending, it produces output following:
 
@@ -24,7 +24,7 @@ Messages are emitted in chronological order ending with latest. Messages are tag
 You should respond to messages with:
 
 ```sh
-uv run triage-bot/message.py outgoing "<conversation id>" "<message string>"
+uv run .agents/skills/triage-bot/message/message.py outgoing "<conversation id>" "<message string>"
 ```
 
 ## Terminating conversations
@@ -34,19 +34,19 @@ Once the conversation is complete, you can end it by either scheduling an appoin
 To schedule an appointment, call this tool with a specific date and with either `am` or `pm`:
 
 ```sh
-uv run triage-bot/message.py schedule "<conversation id>" "<YYYY-mm-dd>" "<am|pm>"
+uv run .agents/skills/triage-bot/message/message.py schedule "<conversation id>" "<YYYY-mm-dd>" "<am|pm>"
 ```
 
 To escalate to the emergency department, you can call this tool:
 
 ```sh
-uv run triage-bot/message.py escalate "<conversation id>"
+uv run .agents/skills/triage-bot/message/message.py escalate "<conversation id>"
 ```
 
 To mark as no-further-action, you can call this tool:
 
 ```sh
-uv run triage-bot/message.py no-further-action "<conversation id>"
+uv run .agents/skills/triage-bot/message/message.py no-further-action "<conversation id>"
 ```
 
 ## Fatal errors

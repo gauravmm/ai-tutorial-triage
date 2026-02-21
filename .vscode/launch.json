@@ -11,11 +11,11 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Report",
+      "name": "Status",
       "type": "debugpy",
       "request": "launch",
       "python": "${workspaceFolder}/.venv/bin/python",
-      "program": "${workspaceFolder}/human-tools/report.py",
+      "program": "${workspaceFolder}/human-tools/status.py",
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal"
     },
