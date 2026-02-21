@@ -25,6 +25,21 @@ log = logging.getLogger(__name__)
 
 TOKEN_FILE = Path("telegram.key")
 
+DISCLAIMER = (
+    "⚠️ *Simulator*\n\n"
+    "This is a training simulation and not a real medical service\\. "
+    "Do not send real personal or medical information\\. "
+    "In an emergency, call 999 immediately\\.\n\n"
+)
+
+HELP_TEXT = (
+    "🤖 *Triage bot simulator*\n\n"
+    "Send a message to start a simulated triage conversation\\.\n\n"
+    "*Commands:*\n"
+    "/new  — start a fresh conversation\n"
+    "/help — show this message"
+)
+
 
 # ---------------------------------------------------------------------------
 # Nonce helpers
@@ -59,6 +74,11 @@ def next_conv_id(chat_id: int) -> str:
 # ---------------------------------------------------------------------------
 
 
+async def handle_help(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+    if update.message:
+        await update.message.reply_text(HELP_TEXT, parse_mode="MarkdownV2")
+
+
 async def handle_new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.effective_chat or not update.message:
         return
@@ -68,10 +88,8 @@ async def handle_new(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     # Touch the file so the nonce is committed even before a message arrives
     with human_conversation(conv_id, create=True):
         pass  # creates file, sets last=HUMAN (no history yet)
-    log.info(f"New conversation started: {conv_id}")
-    await update.message.reply_text(
-        f"New conversation started (ID: {conv_id}). Previous conversation is closed."
-    )
+    log.info("New conversation started: %s", conv_id)
+    await update.message.reply_text(DISCLAIMER, parse_mode="MarkdownV2")
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -80,13 +98,17 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     chat_id = update.effective_chat.id
     text = update.message.text or ""
-    conv_id = get_conv_id(chat_id)
+    is_first = _current_nonce(chat_id) == 0
 
     CONVERSATIONS_DIR.mkdir(exist_ok=True)
+    conv_id = get_conv_id(chat_id)
     with human_conversation(conv_id, create=True) as data:
         data.setdefault("history", []).append(f"$$HUMAN$$ {text}")
 
     log.info("[%s] HUMAN: %s", conv_id, text)
+
+    if is_first:
+        await update.message.reply_text(DISCLAIMER, parse_mode="MarkdownV2")
 
 
 # ---------------------------------------------------------------------------
@@ -105,6 +127,7 @@ def main() -> None:
     CONVERSATIONS_DIR.mkdir(exist_ok=True)
 
     app = Application.builder().token(token).build()
+    app.add_handler(CommandHandler("help", handle_help))
     app.add_handler(CommandHandler("new", handle_new))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
