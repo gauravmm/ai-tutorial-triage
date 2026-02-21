@@ -62,11 +62,24 @@ def _current_nonce(chat_id: int) -> int:
     return max(nonces, default=0)
 
 
+def _is_terminated(data: dict) -> bool:
+    return bool(data.get("escalated") or data.get("no_further_action") or data.get("scheduled"))
+
+
 def get_conv_id(chat_id: int) -> str:
+    """Return the latest conversation ID for this chat, or a new one if it is terminated."""
     nonce = _current_nonce(chat_id)
     if nonce == 0:
-        nonce = 1  # first conversation
-    return f"{chat_id}_{nonce}"
+        return f"{chat_id}_1"
+    conv_id = f"{chat_id}_{nonce}"
+    try:
+        with open(CONVERSATIONS_DIR / f"{conv_id}.yaml") as f:
+            data = yaml.safe_load(f)
+        if data and _is_terminated(data):
+            return f"{chat_id}_{nonce + 1}"
+    except Exception:
+        pass
+    return conv_id
 
 
 def next_conv_id(chat_id: int) -> str:
@@ -164,16 +177,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     chat_id = update.effective_chat.id
     text = update.message.text or ""
-    is_first = _current_nonce(chat_id) == 0
 
     CONVERSATIONS_DIR.mkdir(exist_ok=True)
     conv_id = get_conv_id(chat_id)
+    is_new = not (CONVERSATIONS_DIR / f"{conv_id}.yaml").exists()
     with human_conversation(conv_id, create=True) as data:
         data.setdefault("history", []).append(f"$$HUMAN$$ {text}")
 
     log.info("[%s] HUMAN: %s", conv_id, text)
 
-    if is_first:
+    if is_new:
         await update.message.reply_text(DISCLAIMER, parse_mode="MarkdownV2")
 
 

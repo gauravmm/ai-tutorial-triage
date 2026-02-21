@@ -2,6 +2,9 @@
   "chat.tools.terminal.autoApprove": {
     "/^uv run triage-bot/message\\.py/": {
       "approve": true
+    },
+    "/^uv run intake-bot/message\\.py/": {
+      "approve": true
     }
   }
 }
