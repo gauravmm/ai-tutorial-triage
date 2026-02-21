@@ -57,6 +57,7 @@ def cmd_incoming(_: argparse.Namespace) -> None:
             not data
             or data.get("escalated")
             or data.get("scheduled")
+            or data.get("no_further_action")
             or data.get("last") != "HUMAN"
         ):
             continue
@@ -91,6 +92,12 @@ def cmd_escalate(args: argparse.Namespace) -> None:
         data["escalated"] = True
 
 
+def cmd_no_further_action(args: argparse.Namespace) -> None:
+    """Mark a conversation as requiring no further action."""
+    with conversation(args.id) as data:
+        data["no_further_action"] = True
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Triage-bot simulator tool")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -111,12 +118,16 @@ def main() -> None:
     )
     p_esc.add_argument("id", help="Conversation ID")
 
+    p_nfa = subparsers.add_parser("no-further-action", help="Mark as no further action")
+    p_nfa.add_argument("id", help="Conversation ID")
+
     args = parser.parse_args()
     {
         "incoming": cmd_incoming,
         "outgoing": cmd_outgoing,
         "schedule": cmd_schedule,
         "escalate": cmd_escalate,
+        "no-further-action": cmd_no_further_action,
     }[args.command](args)
 
 
