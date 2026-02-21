@@ -1,10 +1,6 @@
 {
   "chat.tools.terminal.autoApprove": {
-    "/^uv run .agents/skills/triage-bot/message/message\\.py/": {
-      "approve": true
-    },
-    "/^uv run .agents/skills/intake-bot/message/message\\.py/": {
-      "approve": true
-    }
+    "/^uv run \\.agents/skills/triage-bot/message/message\\.py .*/": true,
+    "/^uv run \\.agents/skills/reporter-bot/reports/report\\.py .*/": true
   }
 }

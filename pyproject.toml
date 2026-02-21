@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "pyyaml>=6.0.3",
-    "tabulate>=0.9",
+    "tabulate[widechars]>=0.9",
     "watchdog>=6.0",
     "python-telegram-bot>=21.0",
     "textual>=8.0.0",
